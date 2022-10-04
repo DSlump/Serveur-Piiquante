@@ -28,10 +28,10 @@ app.use(express.json());
 app.post("/api/auth/signup", createUser);
 app.post("/api/auth/login", logUser);
 app.get("/api/sauces", authoriseUser, getSauces);
-app.post("/api/sauces", authoriseUser, upload.single("image"),createSauce);
+app.post("/api/sauces", authoriseUser, upload.single("image"), createSauce);
 app.get("/api/sauces/:id", authoriseUser, getSauceById)
 app.delete("/api/sauces/:id", authoriseUser, deleteSauce)
-app.put("/api/sauces/:id",authoriseUser, modifySauce)
+app.put("/api/sauces/:id", authoriseUser, modifySauce)
 
 // Listen
 app.use("/images", express.static(path.join(__dirname, "images")));
