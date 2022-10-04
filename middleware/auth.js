@@ -1,20 +1,20 @@
 const jwt = require("jsonwebtoken");
 const jwtTokenKey = process.env.JWTTOKENKEY;
 
-function authentificateUser(req, res, next) {
+function authoriseUser(req, res, next) {
     try {
     const requestHeader = req.header("authorization");
     const token = requestHeader.split(" ")[1];
     const decodedToken = jwt.verify(token, jwtTokenKey);
     const userId = decodedToken.userId;
     if (req.body.userId && req.body.userId !== userId) {
-        return res.status(403).send({ message: "Invalid User" });
+        return res.status(403).json({ message: "Invalid User" });
       } else {
         next();
       }
     } catch {
-        res.status(401).send({ message: "Invalid request" });
+        res.status(401).json({ message: "Invalid request" });
     }
 }
 
-module.exports = { authentificateUser };
+module.exports = { authoriseUser };

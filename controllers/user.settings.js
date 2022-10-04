@@ -1,4 +1,4 @@
-const { user } = require("./mongo");
+const User  = require("../models/User");
 const emailValidator = require("email-validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -8,7 +8,7 @@ async function createUser(req, res) {
     try {
         const isValidEmail = emailValidator.validate(req.body.email);
         if (!isValidEmail) {
-            res.status(400).send({
+            res.status(400).json({
                 message: "Le format de l'email est incorrect",
             });
         }
@@ -16,12 +16,12 @@ async function createUser(req, res) {
 
         const hashedPassword = await hashPassword(password);
 
-        const newUser = new user({ email: email, password: hashedPassword });
+        const user = new User({ email: email, password: hashedPassword });
 
-        await newUser.save();
-        res.status(201).send({ message: "Utilisateur enregistré" });
+        await user.save();
+        res.status(201).json({ message: "Utilisateur enregistré" });
     } catch {
-        res.status(401).send({ message: "Utilisateur deja enregistré" });
+        res.status(401).json({ message: "Utilisateur deja enregistré" });
     }
 }
 
@@ -34,17 +34,17 @@ async function logUser(req, res) {
     const email = req.body.email;
     const password = req.body.password;
 
-    const isUserHere = await user.findOne({ email: email });
-    if (!isUserHere) {
-        res.status(401).send({ message: "Utilisateur inconnu" });
+    const dataBaseUser = await User.findOne({ email: email });
+    if (!dataBaseUser) {
+        res.status(401).json({ message: "Utilisateur inconnu" });
     }
-    const passwordCheck = await bcrypt.compare(password, isUserHere.password);
+    const passwordCheck = await bcrypt.compare(password, dataBaseUser.password);
 
     if (!passwordCheck) {
-        res.status(403).send({ message: "Invalid password" });
+        res.status(403).json({ message: "Invalid password" });
     }
     const token = createToken(email);
-    res.status(200).send({ userId: isUserHere?._id, token: token });
+    res.status(200).json({ userId: dataBaseUser?._id, token: token });
 }
 
 function createToken(email) {
