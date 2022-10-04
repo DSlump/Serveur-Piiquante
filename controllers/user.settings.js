@@ -1,4 +1,4 @@
-const User  = require("../models/User");
+const User = require("../models/User");
 const emailValidator = require("email-validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -52,4 +52,4 @@ function createToken(email) {
     return token;
 }
 
-module.exports = {createUser, logUser};
+module.exports = { createUser, logUser };
