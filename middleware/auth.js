@@ -8,12 +8,12 @@ function authoriseUser(req, res, next) {
         const decodedToken = jwt.verify(token, jwtTokenKey);
         const userId = decodedToken.userId;
         if (req.body.userId && req.body.userId !== userId) {
-          return res.status(403).json({ message: "Invalid User" });
+          return res.status(403).json({ message: "Utilisateur invalide" });
         } else {
           next();
         }
       } catch {
-        res.status(401).json({ message: "Invalid request" });
+        return res.status(401).json({ message: "Requête invalide" });
     }
 }
 

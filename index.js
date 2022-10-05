@@ -14,8 +14,8 @@ mongoose
     .catch((err) => console.error("Erreur de connexion à Mongo !", err));
 
 // Gestion utilisateurs
-const { createUser, logUser } = require("./controllers/user.settings");
-const { getSauces, createSauce, getSauceById, deleteSauce, modifySauce } = require("./controllers/sauces.settings");
+const { createUser, logUser } = require("./controllers/user");
+const { getSauces, createSauce, getSauceById, deleteSauce, modifySauce } = require("./controllers/sauces");
 
 // Middleware
 const { upload } = require("./middleware/multer");
