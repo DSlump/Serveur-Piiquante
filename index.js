@@ -15,7 +15,7 @@ mongoose
 
 // Gestion utilisateurs
 const { createUser, logUser } = require("./controllers/user");
-const { getSauces, createSauce, getSauceById, deleteSauce, updateSauce } = require("./controllers/sauces");
+const { getSauces, createSauce, getSauceById, deleteSauce, updateSauce, rateSauce } = require("./controllers/sauces");
 
 // Middleware
 const { upload } = require("./middleware/multer");
@@ -32,7 +32,7 @@ app.post("/api/sauces", authoriseUser, upload.single("image"), createSauce);
 app.get("/api/sauces/:id", authoriseUser, getSauceById)
 app.delete("/api/sauces/:id", authoriseUser, deleteSauce)
 app.put("/api/sauces/:id", authoriseUser, upload.single("image"), updateSauce)
-
+app.post("/api/sauces/:id/like", authoriseUser, rateSauce)
 // Listen
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.listen(port, () => {

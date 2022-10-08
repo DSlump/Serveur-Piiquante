@@ -101,4 +101,19 @@ function deleteLocalImage(response) {
     return response
 }
 
-module.exports = { getSauces, getSauceById, createSauce, deleteSauce, updateSauce };
+function rateSauce(req, res) {
+    const userId = req.body.userId;
+    const sauceId = req.params.id;
+    const rate = req.body.like;
+    console.log("likes", rate)
+    if (rate === 1) {
+        Sauce
+            .findByIdAndUpdate(sauceId)
+    }
+    else if (rate === -1) {
+        Sauce
+            .findByIdAndUpdate(sauceId)
+    }
+}
+
+module.exports = { getSauces, getSauceById, createSauce, deleteSauce, updateSauce, rateSauce };
