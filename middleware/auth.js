@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const jwtTokenKey = process.env.JWTTOKENKEY;
 
-function authoriseUser(req, res, next) {
+function authorizeUser(req, res, next) {
     try {
         const requestHeader = req.header("authorization");
         const token = requestHeader.split(" ")[1];
@@ -17,4 +17,4 @@ function authoriseUser(req, res, next) {
     }
 }
 
-module.exports = { authoriseUser };
+module.exports = { authorizeUser };

@@ -15,11 +15,11 @@ mongoose
 
 // Gestion utilisateurs
 const { createUser, logUser } = require("./controllers/user");
-const { getSauces, createSauce, getSauceById, deleteSauce, updateSauce, rateSauce } = require("./controllers/sauces");
+const { getSauces, createSauce, getSauceById, deleteSauce, updateSauce, rateSauce } = require("./controllers/sauce");
 
 // Middleware
 const { upload } = require("./middleware/multer");
-const { authoriseUser } = require("./middleware/auth");
+const { authorizeUser } = require("./middleware/auth");
 
 /*permet de recuperer informations request*/
 app.use(express.json());
@@ -27,12 +27,12 @@ app.use(express.json());
 // Routes
 app.post("/api/auth/signup", createUser);
 app.post("/api/auth/login", logUser);
-app.get("/api/sauces", authoriseUser, getSauces);
-app.post("/api/sauces", authoriseUser, upload.single("image"), createSauce);
-app.get("/api/sauces/:id", authoriseUser, getSauceById)
-app.delete("/api/sauces/:id", authoriseUser, deleteSauce)
-app.put("/api/sauces/:id", authoriseUser, upload.single("image"), updateSauce)
-app.post("/api/sauces/:id/like", authoriseUser, rateSauce)
+app.get("/api/sauces", authorizeUser, getSauces);
+app.post("/api/sauces", authorizeUser, upload.single("image"), createSauce);
+app.get("/api/sauces/:id", authorizeUser, getSauceById)
+app.delete("/api/sauces/:id", authorizeUser, deleteSauce)
+app.put("/api/sauces/:id", authorizeUser, upload.single("image"), updateSauce)
+app.post("/api/sauces/:id/like", authorizeUser, rateSauce)
 // Listen
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.listen(port, () => {

@@ -1,4 +1,4 @@
-const { unlink } = require("fs")
+const { unlinkSync } = require("fs")
 const Sauce = require("../models/Sauce")
 
 function getSauces(req, res) {
@@ -87,7 +87,7 @@ function createPayload(req, hasNewImage) {
 function removeLocalImage(sauce, hasNewImage) {
     if (!hasNewImage) return sauce
     const imageToDelete = sauce.imageUrl.split("/")[4]
-    unlink(`images/${imageToDelete}`, (err) => {
+    unlinkSync(`images/${imageToDelete}`, (err) => {
         console.error(err)
     })
     return sauce
@@ -95,7 +95,7 @@ function removeLocalImage(sauce, hasNewImage) {
 
 function deleteLocalImage(response) {
     const imageToDelete = response.imageUrl.split("/")[4]
-    unlink(`images/${imageToDelete}`, (err) => {
+    unlinkSync(`images/${imageToDelete}`, (err) => {
         console.error(err)
     })
     return response
@@ -108,11 +108,34 @@ function rateSauce(req, res) {
     console.log("likes", rate)
     if (rate === 1) {
         Sauce
-            .findByIdAndUpdate(sauceId)
+            .findByIdAndUpdate(sauceId, {$inc: { likes: rate}, $pull: { usersLiked: userId }})
+            .then((sauce) => res.status(200).json({message : "Sauce likée", sauce}))
+            .catch(() => {
+                return res.status(400).json({ message: "sauce non notée" });
+            });
     }
     else if (rate === -1) {
         Sauce
-            .findByIdAndUpdate(sauceId)
+            .findByIdAndUpdate(sauceId, {$inc: { likes: rate}, $pull: { usersLiked: userId }})
+            .then((sauce) => res.status(200).json({message : "Sauce dislikée", sauce}))
+            .catch(() => {
+                return res.status(400).json({ message: "sauce non notée" });
+            });
+    }
+    else if (rate === 0) {
+        const sauce = Sauce.findById(sauceId).then((sauce) => sauce)
+
+        console.log(sauce)
+
+        if (sauce.usersLiked.includes(userId)) {
+            // alors on retire un like de l'incrémenteur
+            // et on retire l'userID de l'array
+        }
+
+        if (sauce.usersDisliked.includes(userId)) {
+            // alors on retire un like de l'incrémenteur
+            // et on retire l'userID de l'array
+        }
     }
 }
 
