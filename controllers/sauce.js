@@ -106,36 +106,47 @@ function rateSauce(req, res) {
     const sauceId = req.params.id;
     const rate = req.body.like;
     console.log("likes", rate)
+
     if (rate === 1) {
+
         Sauce
-            .findByIdAndUpdate(sauceId, {$inc: { likes: rate}, $pull: { usersLiked: userId }})
-            .then((sauce) => res.status(200).json({message : "Sauce likée", sauce}))
+            .findByIdAndUpdate(sauceId, { $inc: { likes: +1 }, $push: { usersLiked: userId } })
+            .then((sauce) => res.status(200).json({ message: "Sauce likée", sauce }))
             .catch(() => {
                 return res.status(400).json({ message: "sauce non notée" });
             });
     }
     else if (rate === -1) {
+
         Sauce
-            .findByIdAndUpdate(sauceId, {$inc: { likes: rate}, $pull: { usersLiked: userId }})
-            .then((sauce) => res.status(200).json({message : "Sauce dislikée", sauce}))
+            .findByIdAndUpdate(sauceId, { $inc: { dislikes: +1 }, $push: { usersDisliked: userId } })
+            .then((sauce) => res.status(200).json({ message: "Sauce dislikée", sauce }))
             .catch(() => {
                 return res.status(400).json({ message: "sauce non notée" });
             });
     }
     else if (rate === 0) {
-        const sauce = Sauce.findById(sauceId).then((sauce) => sauce)
 
-        console.log(sauce)
+        Sauce
+            .findById(sauceId).then((sauce) => {
+                if (sauce.usersLiked.includes(userId)) {
+                    Sauce
+                        .findByIdAndUpdate(sauceId, { $inc: { likes: -1 }, $pull: { usersLiked: userId } })
+                        .then((sauce) => res.status(200).json({ message: "Sauce dislikée", sauce }))
+                        .catch(() => {
+                            return res.status(400).json({ message: "sauce non notée" });
+                        });
+                }
 
-        if (sauce.usersLiked.includes(userId)) {
-            // alors on retire un like de l'incrémenteur
-            // et on retire l'userID de l'array
-        }
-
-        if (sauce.usersDisliked.includes(userId)) {
-            // alors on retire un like de l'incrémenteur
-            // et on retire l'userID de l'array
-        }
+                if (sauce.usersDisliked.includes(userId)) {
+                    Sauce
+                        .findByIdAndUpdate(sauceId, { $inc: { dislikes: -1 }, $pull: { usersDisliked: userId } })
+                        .then((sauce) => res.status(200).json({ message: "Sauce likée", sauce }))
+                        .catch(() => {
+                            return res.status(400).json({ message: "sauce non notée" });
+                        });
+                }
+            })
     }
 }
 
