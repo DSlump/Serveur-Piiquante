@@ -1,6 +1,7 @@
 const port = process.env.PORT || 3000;
 const { app, express } = require("./server");
 const path = require("path");
+const helmet = require("helmet");
 
 // connexion a mongoDB
 const mongoose = require("mongoose");
@@ -11,18 +12,20 @@ const uri = `mongodb+srv://${userName}:${password}@cluster0.syvkejs.mongodb.net/
 mongoose
     .connect(uri)
     .then(() => console.log("Connecté à Mongo !"))
-    .catch((err) => console.error("Erreur de connexion à Mongo !", err));
+    .catch(() => console.error("Erreur de connexion à Mongo !"));
 
 // Gestion utilisateurs
 const { createUser, logUser } = require("./controllers/user");
 const { getSauces, createSauce, getSauceById, deleteSauce, updateSauce, rateSauce } = require("./controllers/sauce");
 
 // Middleware
+app.use(express.json());
+
 const { upload } = require("./middleware/multer");
+
 const { authorizeUser } = require("./middleware/auth");
 
-/*permet de recuperer informations request*/
-app.use(express.json());
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 
 // Routes
 app.post("/api/auth/signup", createUser);
